@@ -20,17 +20,14 @@ filt2 = filt2 - filt1*np.sum(filt1*filt2) # orthogonalize to 1st filter
 filt2 = (filt2)/np.linalg.norm(filt2) # normalize
 
 slen = 10000 # Stimulus length
-mat = sp.io.loadmat('C:/Users/bernardo/Documents/MATLAB/USP/iSTAC/stimtest.mat')
-Stim = mat['Stim']
+Stim = plt.randn(slen, 1.)
 RefreshRate = 100. # refresh rate
 
 DC = (0.75, .5)
 linresp = np.hstack((sg.convolve2d(np.concatenate((np.zeros((len(filt1)-1, Stim.shape[1])), Stim), 0), np.rot90(filt1, 2), 'valid')+.75, sg.convolve2d(np.concatenate((np.zeros((len(filt2)-1, Stim.shape[1])), Stim), 0), np.rot90(filt2, 2), 'valid')+.5)) # filter output
 r = 10*linresp[:,0]**2 + 8*linresp[:,1]**2      # instantaneous spike rate
 r = np.vstack(r)
-mat = sp.io.loadmat('C:/Users/bernardo/Documents/MATLAB/USP/iSTAC/spikesTest.mat')
-spikes = mat['spikes']
-#spikes = np.random.poisson(r/RefreshRate)   # generate spikes
+spikes = np.random.poisson(r/RefreshRate)   # generate spikes
 [sta, stc, rawmu, rawcov] = sstc.simpleSTC(Stim, spikes, nt) #% Compute STA and STC
 u, s, v = np.linalg.svd(stc, 'full_matrices') # Compute eigenvectors of STC matrix
 s = np.diag(s)
