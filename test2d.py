@@ -60,5 +60,3 @@ fig4 = plt.figure()
 plt.plot(tvec, np.hstack((np.vstack(vecs[:, 0]), np.vstack(vecs[:, 1]))))
 plt.title('iSTAC filters')
 plt.savefig('plots/iSTAC_filters')
-
-a = 2
