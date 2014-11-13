@@ -4,12 +4,7 @@ import scipy as sp
 import scipy.signal as sg
 import simpleSTC as sstc
 import compiSTAC as ci
-import matplotlib
-
-try:
-    import matplotlib.pylab as plt
-except ImportError:
-    pass
+import matplotlib.pylab as plt
 
 nt = 20 # number of temporal elements of filter
 tvec = np.vstack(np.arange(-nt+1., 1)) # time vector
@@ -20,7 +15,7 @@ filt2 = filt2 - filt1*np.sum(filt1*filt2) # orthogonalize to 1st filter
 filt2 = (filt2)/np.linalg.norm(filt2) # normalize
 
 slen = 2000 # Stimulus length
-Stim = plt.randn(slen, 1.)
+Stim = Stim = plt.randn(slen, 1.)
 RefreshRate = 100. # refresh rate
 
 linresp = (sg.convolve2d(np.concatenate((np.zeros((len(filt1)-1, Stim.shape[1])), Stim), 0), np.rot90(filt1, 2), 'valid')) # filter output
@@ -36,8 +31,12 @@ ndims = 1
 vecs, vals, mu1, mu0, v1, v2, _ = ci.compiSTAC(sta, stc, rawmu, rawcov, ndims)
 
 fig1 = plt.figure()
-plt.plot(tvec, np.hstack((filt1, sta/np.linalg.norm(sta), np.reshape(u[:, -1], (len(u), 1)), vecs)))
+#plt.plot(tvec, np.hstack((filt1, sta/np.linalg.norm(sta), np.reshape(u[:, -1], (len(u), 1)), vecs)))
+f1, = plt.plot(tvec, filt1)
+sta1, = plt.plot(tvec, sta/np.linalg.norm(sta))
+stc1, = plt.plot(tvec, np.reshape(u[:, -1], (len(u), 1)))
+istac1, = plt.plot(tvec, vecs)
+plt.legend([f1, sta1, stc1, istac1], ['true k', 'STA', 'STC', 'iSTAC'], loc=2)
 plt.title('Test: rectified linear LNP neuron')
-plt.savefig('plots/test1d')
-
-a = 2
+plt.show()
+#plt.savefig('plots/test1d')
