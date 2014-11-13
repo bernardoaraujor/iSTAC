@@ -105,8 +105,6 @@ def compiSTAC(mu1, A1, mu0, A0, ndims, cthr=1e-2):
         BackingUP = 0
         
         # Start by finding best starting point for optimization
-        if j == 4:
-            o = 2
         kstrt = os.orthogonalsubset(vecs, k0s)
         v0s = np.zeros((kstrt.shape[1], 1))
         for ii in np.arange(0, kstrt.shape[1]):
@@ -122,31 +120,23 @@ def compiSTAC(mu1, A1, mu0, A0, ndims, cthr=1e-2):
         k0 = kstrt[:,imin]
         
         # Perform optimization -- restart if optimization doesn't terminate
-        Beq = np.zeros((j, 1))
-        
-        #IMPLEMENT THIS?
-        #[k,~,exitflag] = fmincon(@negKLsubspace, k0,[],[],vecs',Beq,LB,UB,...
-         #       @NormEq1,opts,mu,A,bv,vA,vAv,vecs);
-
         opt = ({'maxiter': '50', 'disp': False})
         if len(vecs) > 0:
-            cons = ({'type': 'eq', 'fun': np.dot(vecs[:, np.arange(0, len(Beq))].T, k0) - Beq}, {'type': 'ineq', 'fun': np.dot(k0.T, k0)-1}, {'type': 'eq', 'fun': 2*k0})
-            #k = sp.optimize.minimize(nkls.negKLsubspace, k0, args = (mu, A, bv, vA, vAv, vecs), bounds = np.hstack((LB, UB)), constraints = cons, options = opt)
-            k = sp.optimize.minimize(nkls.negKLsubspace, k0, args = (mu, A, bv, vA, vAv, vecs), bounds = np.hstack((LB, UB)))['x']
+            k = sp.optimize.fmin_slsqp(nkls.negKLsubspace, k0, args = (mu, A, bv, vA, vAv, vecs, j), f_eqcons = eq, bounds = np.hstack((LB, UB)))
             k = np.vstack(k)
 
         else:
-            k = sp.optimize.minimize(nkls.negKLsubspace, k0, args = (mu, A, bv, vA, vAv, vecs), bounds = np.hstack((LB, UB)))['x']
+            k = sp.optimize.fmin_slsqp(nkls.negKLsubspace, k0, args = (mu, A, bv, vA, vAv, vecs), bounds = np.hstack((LB, UB)))
             k = np.vstack(k)
 
         #if exitflag<1:
             #% Check convergence
             #print('iSTAC-- possible error: optimization not terminated; j=%d\nFIX THIS?\n'%j)
-        
+
         if (j > 0):    # normalize k with respect to previous vecs
             k = k - np.dot(vecs, np.dot(vecs.T, k))
             k = k / np.linalg.norm((k))
-        
+
         # Compute KL divergence along this dimension
         print(j)
         print(k)
@@ -174,8 +164,10 @@ def compiSTAC(mu1, A1, mu0, A0, ndims, cthr=1e-2):
         else:
             mini = min(valdiffs[0:j])
 
-        if (valdiffs[j] > mini) and (j+1 < nd/2.) and (mini != 0) and (j < nd/2):
+        if (valdiffs[j] > mini) and (j+1 < nd/2.) and (mini != 0):
+            print('aaaa')
             jj = np.nonzero((valdiffs[0:j] < valdiffs[j]))
+            #jj = jj[0]
             k0s = np.array(np.hstack((k, k0s)))
 
             vecss = vecs[:,0:jj[0]]
@@ -213,13 +205,9 @@ def compiSTAC(mu1, A1, mu0, A0, ndims, cthr=1e-2):
             vA = np.dot(vecs[:, np.arange(0, j)].T, A)
             vAv = np.dot(vecs[:, np.arange(0, j)].T, np.dot(A, vecs[:, np.arange(0, j)]))
 
-    if j == 10:
-        o = 2
-
     vecs = np.dot(Wmat.T, vecs[:, np.arange(0, j)])
     vecs = gs.gsorth(vecs)
 
-    # REMOVE GAUSSPARAMS?
     mu1 = np.dot(vecs.T, mu1)
     mu0 = np.dot(vecs.T, mu0)
     v1 = np.dot(vecs.T, np.dot(A1, vecs))
@@ -227,13 +215,14 @@ def compiSTAC(mu1, A1, mu0, A0, ndims, cthr=1e-2):
     
     return vecs, vals, mu1, mu0, v1, v2, nullBasis
 
-def NormEq1(x):
-    """
-    nonlinear function for implementing the constraint norm(x) = 1;
-    """
+def eq1(x, vecs, j, *args):
+    return np.dot(args[-2][:, np.arange(0, args[-1])].T, x)
 
-    ceq = np.dot(x.T, x)-1.
-    dceq = 2.*x
-        
-    return [ceq, dceq]
+def eq2(x, *args):
+    return np.dot(x.T, x)-1
 
+def eq(x, *args):
+    return np.reshape(np.vstack((np.dot(x.T, x)-1, np.vstack(np.dot(args[-2][:, np.arange(0, args[-1])].T, x)))), (1+args[-1],))
+
+def eq3(x, *args):
+    return 2*x
