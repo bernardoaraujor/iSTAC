@@ -10,7 +10,7 @@ try:
 except ImportError:
     pass
 
-def negKLsubspace(k, mu, A, bv, va, vav, vecs):
+def negKLsubspace(k, mu, A, bv, va, vav, vecs, vecssize = 0):
 
     """
     Adapted from:
@@ -38,8 +38,8 @@ def negKLsubspace(k, mu, A, bv, va, vav, vecs):
          vecs = basis for dimensions of subspace already "peeled off"  
     """
     
-    if vecs.size > 0:
-        k = k - np.dot(vecs, (np.dot(vecs.T, k)))   # orthogonalize k with respect to 'vecs'
+    if vecssize > 0:
+        k = k - np.dot(vecs[:, np.arange(0, vecssize)], (np.dot(vecs[:, np.arange(0, vecssize)].T, k.T)))   # orthogonalize k with respect to 'vecs'
     
     
     k = np.divide(k, np.linalg.norm(k))   # normalize k
