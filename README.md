@@ -8,7 +8,7 @@ covariance information. The filters can be considered as the first stage in a li
 model of the neuron's response. They are sorted by informativeness, providing an estimate of the mutual information, 
 gained by the inclusion of each filter. 
 
-Adapted by Bernardo Rodrigues from J. Pillow's MATLAB code: https://github.com/pillowlab/iSTAC
+Ported by Bernardo Rodrigues from J. Pillow's MATLAB code: https://github.com/pillowlab/iSTAC
 
 ===========================================
 - compiSTAC.py: Computes a set of iSTAC "filters" -- i.e., an orthogonal basis that captures the maximal information about spiking given the stimuli.  This is equal to the basis that captures maximal KL divergence between the two Gaussians N(mu1,A1) and N(mu0,A0).
