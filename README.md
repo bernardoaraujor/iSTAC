@@ -20,7 +20,7 @@ Usage:
 ```
 vecs, vals, mu1, mu0, v1, v2, nullBasis = compiSTAC(mu1, A1, mu0, A0, ndims, cthr=1e-2)
 
-Inputs:
+#Inputs:
 #                    mu1 [n x 1] = spike-triggered average    (1/nsp*sum_i y_i*x_i)
 #                    A1 [n x n] = spike-triggered covariance (with mean removed)
 #                    mu2 [n x 1] = mean of stimulus ensemble (1/N sum_i x_i)
@@ -28,7 +28,7 @@ Inputs:
 #                    ndims [1 x 1] = number of filters to estimate 
 #                    cthr  [1 x 1] = eigenvalue threshold for whitening (OPTIONAL; DEFAULT=0.01). Will project out any dimensions for which the variance of the raw stimuli is < max(eigval)*cthr. 
 
-Outputs: 
+#Outputs: 
 #                    vecs [n x ndims] = matrix with columns giving an (ordered) basis for the maximal information-preserving subspace of degree ndims
 #                    vals [ndims x 1] = value of the KL divergence as subspace dimensionality increases from 1 to ndims 
 #                    mu1 = means of first gaussian
@@ -41,13 +41,13 @@ Outputs:
 
 STA, STC, RawMu, RawCov = simpleSTC(Stim, sp, nkt)
 
-Inputs:
+#Inputs:
 #                    Stim = stimulus matrix; 1st dimension = time, 2nd dimension = space
 #                    sp = spikes;  coloumn vector of spike count in each time bin or list of spike times
 #                    nkt  = number of time samples to include in the spike-triggered ensemble
 #                    CriticalSize = maximum number of floats to store while computing cov (smaller = slower but smaller memory requirement)   
                      
-Outputs:
+#Outputs:
 #                    STA = spike-triggered average
 #                    STC = spike-triggered covariance (covariance around the mean);
 #                    RawMu = mean of raw stimulus ensemble
