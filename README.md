@@ -15,10 +15,9 @@ Ported by Bernardo Rodrigues from J. Pillow's MATLAB code: https://github.com/pi
 
 - simpleSTC.py: Computes mean and covariance of raw and spike-triggered stimuli.
 
-all other functions are called by the two above.
 
-Using:
-
+Usage:
+```
 vecs, vals, mu1, mu0, v1, v2, nullBasis = compiSTAC(mu1, A1, mu0, A0, ndims, cthr=1e-2)
 
 Inputs:
@@ -53,3 +52,4 @@ Outputs:
 -                    STC = spike-triggered covariance (covariance around the mean);
 -                    RawMu = mean of raw stimulus ensemble
 -                    RawCov = covariance of raw ensemble
+```
